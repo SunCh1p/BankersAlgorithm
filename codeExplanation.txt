@@ -1,0 +1,20 @@
+Problem:
+  Implement Banker's algorithm using the data provided in the table of the homework problem.
+
+Resource found that I used to assist in solving this problem:
+https://www.geeksforgeeks.org/program-bankers-algorithm-set-1-safety-algorithm/
+
+Approach:
+  n is the number of processes
+  m is the number of resoruce types
+
+  available is an array of size m where available[i] = k means there are k instances of resource ri
+  max is a 2 dimensional array of size n*m where max[i,j] = k means that process i may request at most k instances of resource j 
+  allocation is a 2 dimensional array of size n*m taht defines the number of resources of each type that are currently allocated to process at i 
+  need is a 2 dimensional array where need[i,j] = k means process i is currently allocated k instances of resource j 
+
+  We need to define work and finish array so we can keep track of our progress
+  Our goal is to find a process until either finish at current index is false, or there is no index where it is false
+  if a current process is found to be able ot be added to a safe sequence, release its resources
+  if finish array is all true, system is in safe state.
+  

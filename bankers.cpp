@@ -109,6 +109,7 @@ int main(){
     //close file
     file.close();
 
+    //check if system is safe
     bool res = isSafe(n,m,available,max,allocation);
     if(res == true){
         std::cout << "system is safe" << std::endl;
