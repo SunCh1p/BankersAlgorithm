@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 bool isSafe(int n, int m, std::vector<int> available, std::vector<std::vector<int>> max, std::vector<std::vector<int>> allocation){
     //set need n*m array where need[i,j] = max[i,j] - allocation[i,j] which indicates how much a process needs for a specific resource type
@@ -21,7 +22,6 @@ bool isSafe(int n, int m, std::vector<int> available, std::vector<std::vector<in
 
     //copy available resources
     std::vector<int> work = available;
-    return false;
 
     //while all processes are no finished or system is not in safe state
     int count = 0;
@@ -43,7 +43,7 @@ bool isSafe(int n, int m, std::vector<int> available, std::vector<std::vector<in
                 if(j == m){
                     //if so, free the resources of current process by adding them to available work
                     for(int k = 0; k < m; k++){
-                        work[k] += allocation[i][j];
+                        work[k] += allocation[i][k];
                     }
                     //add process to safe sequence
                     safeSequence.push_back(i);
@@ -64,41 +64,57 @@ bool isSafe(int n, int m, std::vector<int> available, std::vector<std::vector<in
     }
     
     //system is in safe state
-    std::cout << "System is in safe state" << std::endl;
+    std::cout << "Safe Sequence:" << std::endl;
     for(int i = 0; i < safeSequence.size(); i++){
         std::cout << safeSequence[i] << ' ';
     }
+    std::cout << std::endl;
     return true;
-
-
 }
 
 int main(){
+    //open file
+    std::ifstream file("input.txt");
+
     //set the number of processes
-    int n = 5;
+    int n;
+    file >> n;
 
     //set the number of resource types
-    int m = 3;
+    int m;
+    file >> m;
 
-    //set allocation n*m array where allocation[i,j] = k means process pi is currently allocated k resources of type rj
-    std::vector<std::vector<int>> allocation = {
-        {0, 1, 0},
-        {2, 0, 0},
-        {3, 0, 2},
-        {2, 1, 1},
-        {0, 0, 2}
-    };
+    //get allocation n*m vector where allocation[i,j] = k means process pi is currently allocated k resources of type rj
+    std::vector<std::vector<int>> allocation(n, std::vector<int>(m));
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < m; j++) {
+            file >> allocation[i][j];
+        }
+    }
 
-    //set max n*m array where max[i,j] = k means process pi may request at most k instances of resource type rj
-    std::vector<std::vector<int>> max = {
-        {7, 5, 3},
-        {3, 2, 2},
-        {9, 0, 2},
-        {2, 2, 2},
-        {4, 3, 3}
-    };
+    //get max n*m vector where max[i,j] = k means process pi may request at most k instances of resource type rj
+    std::vector<std::vector<int>> max(n, std::vector<int>(m));
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < m; j++) {
+            file >> max[i][j];
+        }
+    }
 
-    //set available m array where available[j] = k means there are k instances of resource type rj
-    std::vector<int> available = {3, 3, 2};
+    //get available m array where available[i] = k means there are k instances of resource type ri
+    std::vector<int> available(3);
+    for(int i = 0; i < m; i++){
+        file >> available[i];
+    }
 
+    //close file
+    file.close();
+
+    bool res = isSafe(n,m,available,max,allocation);
+    if(res == true){
+        std::cout << "system is safe" << std::endl;
+    } else {
+        std::cout << "system isn't safe" << std::endl;
+    }
+
+    return 0;
 }
